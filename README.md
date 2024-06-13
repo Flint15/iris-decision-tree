@@ -1,62 +1,33 @@
-# Getting started
+# Grid search
 
-## Prerequisites
-* numpy
-* pandas
-* matplotlib
-* scikit-learn
-  
-## Instalation
-`pip install numpy`
-
-`pip install pandas`
-
-`pip install matplotlib`
-
-`pip install scikit-learn`
-
-## Usage
+## Changes
 
 ```python
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.datasets import load_iris
-from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import accuracy_score, classification_report
-from sklearn import tree
+# import necessary library
+from sklearn.model_selection import GridSearchCV
+
+#Define the parameter grid for GridSearchCV
+param_grid = {
+  'max_depth': [3, 5, 8, 10],
+  'min_samples_split': [2, 3, 4],
+  'max_features': [None, 'sqrt', 'log2']
+}
+
+# Initialize GridSearchCv
+grid_search = GridSearchCV(decision_tree_clf, param_grid, cv=5) # cv-cross validation
+
+# Fit the model using GridSearchCV
+grid_search.fit(X_train, y_train)
+
+# Get the best model from grid search
+best_tree = grid_search.best_estimator_
+
+# Predict using the best model
+y_pred = best_tree.predict(X_test)
+
+print(f"Best Parameters: {grid_search.best_params_}")
+
+# Visualize the best decision tree
+tree.plot_tree(best_tree, feature_names=iris.feature_names, class_names=iris.target_names, filled=True)
 ```
-`from sklearn import tree` use for visualization of decision trees
-### Load, split and train
-```python
-iris = load_iris()
-X = iris.data
-y = iris.target
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-decision_tree_clf = DecisionTreeClassifier(random_state=42)
-decision_tree_clf.fit(X_train, y_train)
-```
-`decision_tree_clf = DecisionTreeClassifier(random_state=42)` Make the results of the decision tree classifier are reproducible
-### Visualisation of prediction
-```python
-y_pred = decision_tree_clf.predict(X_test)
-accuracy = accuracy_score(y_test, y_pred)
-report = classification_report(y_test, y_pred, target_names=iris.target_names)
-
-print(f"Accuracy: {accuracy}")
-print("Classification Report:")
-print(report)
-
-plt.figure(figsize=(15,10))
-tree.plot_tree(decision_tree_clf, feature_names=iris.feature_names, class_names=iris.target_names, filled=True)
-plt.show()
-```
-`plt.figure(figsize=(15,10))` is used to specify the size of the figure
-
-`tree.plot_tree(decision_tree_clf, feature_names=iris.feature_names, class_names=iris.target_names, filled=True)
-` used to visualize the decision tree
-
-`filled=True` Fills the nodes in the plot with colors to indicate the majority class in each node
